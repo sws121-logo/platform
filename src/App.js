@@ -5,12 +5,16 @@ import Dashboard from './components/Dashboard';
 import Login from './components/Login';
 import DeployStatus from './components/DeployStatus';
 
+// GitHub API base URL
+const GITHUB_API_BASE = 'https://api.github.com';
+
 function App() {
   const [user, setUser] = useState(null);
   const [projects, setProjects] = useState([]);
   const [deployments, setDeployments] = useState([]);
   const [view, setView] = useState('dashboard');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   // Check if user is logged in
   useEffect(() => {
@@ -18,32 +22,73 @@ function App() {
     if (savedUser) {
       const userData = JSON.parse(savedUser);
       setUser(userData);
-      fetchProjects();
-      fetchDeployments();
+      fetchGitHubRepos(userData.username);
     }
-  }, []);
-
-  // Simulate fetching projects from GitHub
-  const fetchProjects = async () => {
-    setLoading(true);
-    // Simulate API call delay
-    setTimeout(() => {
-      const mockProjects = [
-        { id: 1, name: 'react-portfolio', url: 'https://github.com/user/react-portfolio' },
-        { id: 2, name: 'ecommerce-site', url: 'https://github.com/user/ecommerce-site' },
-        { id: 3, name: 'blog-app', url: 'https://github.com/user/blog-app' },
-      ];
-      setProjects(mockProjects);
-      setLoading(false);
-    }, 1000);
-  };
-
-  // Simulate fetching deployments
-  const fetchDeployments = async () => {
+    
     const savedDeployments = localStorage.getItem('deployhub_deployments');
     if (savedDeployments) {
       setDeployments(JSON.parse(savedDeployments));
     }
+  }, []);
+
+  // Fetch GitHub repositories using public API
+  const fetchGitHubRepos = async (username) => {
+    setLoading(true);
+    setError('');
+    
+    try {
+      // Using GitHub's public API to get user repos
+      const response = await fetch(`${GITHUB_API_BASE}/users/${username}/repos?sort=updated&per_page=100`);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('GitHub user not found');
+        } else if (response.status === 403) {
+          // Rate limit exceeded, fall back to mock data
+          console.warn('GitHub API rate limit exceeded, using mock data');
+          useMockData(username);
+          return;
+        } else {
+          throw new Error('Failed to fetch GitHub repositories');
+        }
+      }
+      
+      const repos = await response.json();
+      
+      // Transform GitHub API response to our project format
+      const userProjects = repos.map(repo => ({
+        id: repo.id,
+        name: repo.name,
+        url: repo.html_url,
+        description: repo.description,
+        language: repo.language,
+        stars: repo.stargazers_count,
+        forks: repo.forks_count,
+        updated: repo.updated_at,
+        isFork: repo.fork
+      }));
+      
+      setProjects(userProjects);
+    } catch (error) {
+      console.error('Error fetching GitHub repos:', error);
+      setError(error.message);
+      // Fall back to mock data
+      useMockData(username);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fallback to mock data if GitHub API fails
+  const useMockData = (username) => {
+    const mockProjects = [
+      { id: 1, name: 'react-portfolio', url: `https://github.com/${username}/react-portfolio`, description: 'A portfolio website built with React' },
+      { id: 2, name: 'ecommerce-site', url: `https://github.com/${username}/ecommerce-site`, description: 'An e-commerce platform' },
+      { id: 3, name: 'blog-app', url: `https://github.com/${username}/blog-app`, description: 'A blogging application' },
+      { id: 4, name: 'task-manager', url: `https://github.com/${username}/task-manager`, description: 'A task management application' },
+      { id: 5, name: 'weather-app', url: `https://github.com/${username}/weather-app`, description: 'A weather forecasting application' },
+    ];
+    setProjects(mockProjects);
   };
 
   // Save deployments to localStorage
@@ -117,13 +162,12 @@ function App() {
       id: 1,
       username: userData.username,
       name: userData.username,
-      avatar: `https://github.com/${userData.username}.png?size=100`
+      avatar: userData.avatar
     };
     
     setUser(user);
     localStorage.setItem('deployhub_user', JSON.stringify(user));
-    fetchProjects();
-    fetchDeployments();
+    fetchGitHubRepos(userData.username);
   };
 
   const handleLogout = () => {
@@ -150,7 +194,13 @@ function App() {
       </header>
       
       <main>
-        {loading && <div className="loading">Loading...</div>}
+        {error && (
+          <div className="error-banner">
+            {error} - Showing demo data instead of your actual GitHub repositories.
+          </div>
+        )}
+        
+        {loading && <div className="loading">Loading your GitHub repositories...</div>}
         
         {view === 'dashboard' && (
           <Dashboard 

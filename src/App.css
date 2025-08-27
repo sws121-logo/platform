@@ -399,3 +399,85 @@ main {
   40% { content: '..'; }
   60%, 100% { content: '...'; }
 }
+
+/* GitHub OAuth Button */
+.github-oauth-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 12px;
+  background-color: #24292e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.github-oauth-btn:hover {
+  background-color: #000;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: #666;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #ddd;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+/* Project card enhancements */
+.project-description {
+  color: #666;
+  font-size: 14px;
+  margin: 8px 0;
+}
+
+.project-meta {
+  display: flex;
+  gap: 12px;
+  margin: 8px 0;
+  font-size: 13px;
+  color: #888;
+}
+
+.project-language {
+  background-color: #eaf5ff;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.project-link {
+  font-size: 14px;
+  color: #6e8efb;
+  text-decoration: none;
+}
+
+.project-link:hover {
+  text-decoration: underline;
+}
+
+/* Error banner */
+.error-banner {
+  background-color: #ffebee;
+  color: #c62828;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  border-left: 4px solid #c62828;
+}

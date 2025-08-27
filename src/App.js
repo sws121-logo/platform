@@ -31,6 +31,18 @@ function App() {
     }
   }, []);
 
+  // Function to load mock data (renamed from useMockData)
+  const loadMockData = (username) => {
+    const mockProjects = [
+      { id: 1, name: 'react-portfolio', url: `https://github.com/${username}/react-portfolio`, description: 'A portfolio website built with React' },
+      { id: 2, name: 'ecommerce-site', url: `https://github.com/${username}/ecommerce-site`, description: 'An e-commerce platform' },
+      { id: 3, name: 'blog-app', url: `https://github.com/${username}/blog-app`, description: 'A blogging application' },
+      { id: 4, name: 'task-manager', url: `https://github.com/${username}/task-manager`, description: 'A task management application' },
+      { id: 5, name: 'weather-app', url: `https://github.com/${username}/weather-app`, description: 'A weather forecasting application' },
+    ];
+    setProjects(mockProjects);
+  };
+
   // Fetch GitHub repositories using public API
   const fetchGitHubRepos = async (username) => {
     setLoading(true);
@@ -46,7 +58,7 @@ function App() {
         } else if (response.status === 403) {
           // Rate limit exceeded, fall back to mock data
           console.warn('GitHub API rate limit exceeded, using mock data');
-          useMockData(username);
+          loadMockData(username);
           return;
         } else {
           throw new Error('Failed to fetch GitHub repositories');
@@ -73,22 +85,10 @@ function App() {
       console.error('Error fetching GitHub repos:', error);
       setError(error.message);
       // Fall back to mock data
-      useMockData(username);
+      loadMockData(username);
     } finally {
       setLoading(false);
     }
-  };
-
-  // Fallback to mock data if GitHub API fails
-  const useMockData = (username) => {
-    const mockProjects = [
-      { id: 1, name: 'react-portfolio', url: `https://github.com/${username}/react-portfolio`, description: 'A portfolio website built with React' },
-      { id: 2, name: 'ecommerce-site', url: `https://github.com/${username}/ecommerce-site`, description: 'An e-commerce platform' },
-      { id: 3, name: 'blog-app', url: `https://github.com/${username}/blog-app`, description: 'A blogging application' },
-      { id: 4, name: 'task-manager', url: `https://github.com/${username}/task-manager`, description: 'A task management application' },
-      { id: 5, name: 'weather-app', url: `https://github.com/${username}/weather-app`, description: 'A weather forecasting application' },
-    ];
-    setProjects(mockProjects);
   };
 
   // Save deployments to localStorage

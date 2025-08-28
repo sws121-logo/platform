@@ -1,5 +1,5 @@
 // src/App.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 import Dashboard from './components/Dashboard';
 import Login from './components/Login';
@@ -15,6 +15,7 @@ function App() {
   const [view, setView] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const deploymentTimers = useRef({});
 
   // Check if user is logged in
   useEffect(() => {
@@ -29,6 +30,13 @@ function App() {
     if (savedDeployments) {
       setDeployments(JSON.parse(savedDeployments));
     }
+
+    // Clean up timers on unmount
+    return () => {
+      Object.values(deploymentTimers.current).forEach(timerId => {
+        clearTimeout(timerId);
+      });
+    };
   }, []);
 
   // Function to load mock data
@@ -70,9 +78,7 @@ function App() {
       // Filter out forks and only include repos that can be deployed
       const deployableRepos = repos.filter(repo => 
         !repo.fork && 
-        repo.size > 0 && // Ensure repo has content
-        (repo.language || // Has code files
-         checkIfDeployable(repo)) // Or has other deployable content
+        repo.size > 0
       );
       
       // Transform GitHub API response to our project format
@@ -86,7 +92,7 @@ function App() {
         forks: repo.forks_count,
         updated: repo.updated_at,
         isFork: repo.fork,
-        hasPages: repo.has_pages, // GitHub Pages indicator
+        hasPages: repo.has_pages,
         size: repo.size
       }));
       
@@ -101,25 +107,12 @@ function App() {
     }
   };
 
-  // Check if a repo is deployable even without obvious code files
-  const checkIfDeployable = (repo) => {
-    // Check for common web project files
-    const deployableFiles = [
-      'index.html', 'package.json', 'requirements.txt', 
-      'app.py', 'main.js', 'style.css', 'config.yml'
-    ];
-    
-    // In a real app, we would check the repo contents via API
-    // For now, we'll assume repos with reasonable size are deployable
-    return repo.size > 10; // At least 10KB of content
-  };
-
   // Save deployments to localStorage
   const saveDeployments = (deployments) => {
     localStorage.setItem('deployhub_deployments', JSON.stringify(deployments));
   };
 
-  // Deploy project - FASTER version
+  // Deploy project - FIXED version
   const deployProject = async (projectId) => {
     const project = projects.find(p => p.id === projectId);
     if (!project) return;
@@ -139,11 +132,14 @@ function App() {
       logs: ['Initializing deployment...']
     };
     
-    const updatedDeployments = [newDeployment, ...deployments];
-    setDeployments(updatedDeployments);
-    saveDeployments(updatedDeployments);
+    // Update state immediately
+    setDeployments(prev => {
+      const updated = [newDeployment, ...prev];
+      saveDeployments(updated);
+      return updated;
+    });
     
-    // FASTER build process with fewer steps and shorter delays
+    // FASTER build process with proper state updates
     const buildSteps = [
       { delay: 300, log: 'Cloning repository...' },
       { delay: 400, log: 'Analyzing project structure...' },
@@ -152,37 +148,52 @@ function App() {
       { delay: 300, log: 'Finalizing deployment...' }
     ];
     
-    let currentStep = 0;
-    const updateBuildProcess = () => {
-      if (currentStep < buildSteps.length) {
-        setTimeout(() => {
-          newDeployment.logs.push(buildSteps[currentStep].log);
-          currentStep++;
-          
-          // Update the deployment in state
-          const updatedDeployments = deployments.map(d => 
-            d.id === deploymentId ? { ...d, logs: [...newDeployment.logs] } : d
-          );
-          setDeployments(updatedDeployments);
-          saveDeployments(updatedDeployments);
-          
-          updateBuildProcess();
-        }, buildSteps[currentStep].delay);
-      } else {
-        // Mark as deployed
-        const updatedDeployments = deployments.map(d => 
-          d.id === deploymentId ? { 
-            ...d, 
-            status: 'deployed',
-            logs: [...d.logs, 'Deployment completed successfully! 🎉']
-          } : d
-        );
-        setDeployments(updatedDeployments);
-        saveDeployments(updatedDeployments);
-      }
-    };
+    let totalDelay = 0;
     
-    updateBuildProcess();
+    // Process each build step
+    buildSteps.forEach((step, index) => {
+      const timerId = setTimeout(() => {
+        // Update logs for this step
+        setDeployments(prevDeployments => {
+          const updated = prevDeployments.map(d => {
+            if (d.id === deploymentId) {
+              const newLogs = [...d.logs, step.log];
+              return { ...d, logs: newLogs };
+            }
+            return d;
+          });
+          saveDeployments(updated);
+          return updated;
+        });
+        
+        // If this is the final step, mark as deployed
+        if (index === buildSteps.length - 1) {
+          setTimeout(() => {
+            setDeployments(prevDeployments => {
+              const updated = prevDeployments.map(d => {
+                if (d.id === deploymentId) {
+                  return { 
+                    ...d, 
+                    status: 'deployed',
+                    logs: [...d.logs, 'Deployment completed successfully! 🎉']
+                  };
+                }
+                return d;
+              });
+              saveDeployments(updated);
+              return updated;
+            });
+            
+            // Clean up timer reference
+            delete deploymentTimers.current[deploymentId];
+          }, 100);
+        }
+      }, totalDelay);
+      
+      // Store timer reference for cleanup
+      deploymentTimers.current[deploymentId] = timerId;
+      totalDelay += step.delay;
+    });
   };
 
   const handleLogin = (userData) => {
@@ -204,6 +215,12 @@ function App() {
     setDeployments([]);
     localStorage.removeItem('deployhub_user');
     localStorage.removeItem('deployhub_deployments');
+    
+    // Clear all timers on logout
+    Object.values(deploymentTimers.current).forEach(timerId => {
+      clearTimeout(timerId);
+    });
+    deploymentTimers.current = {};
   };
 
   if (!user) {
@@ -215,8 +232,18 @@ function App() {
       <header className="App-header">
         <h1>DeployHub</h1>
         <nav>
-          <button onClick={() => setView('dashboard')}>Dashboard</button>
-          <button onClick={() => setView('deployments')}>Deployments</button>
+          <button 
+            onClick={() => setView('dashboard')}
+            className={view === 'dashboard' ? 'active' : ''}
+          >
+            Dashboard
+          </button>
+          <button 
+            onClick={() => setView('deployments')}
+            className={view === 'deployments' ? 'active' : ''}
+          >
+            Deployments ({deployments.length})
+          </button>
           <button onClick={handleLogout}>Logout</button>
         </nav>
       </header>
@@ -235,7 +262,7 @@ function App() {
             user={user} 
             projects={projects} 
             onDeploy={deployProject}
-            deployments={deployments}
+            deployments={deployments.slice(0, 3)} // Show only recent 3 on dashboard
           />
         )}
         

@@ -1,9 +1,12 @@
-// components/Dashboard.js - Main dashboard
-import React from 'react';
+// src/components/Dashboard.js
+import React, { useState } from 'react';
 import ProjectList from './ProjectList';
 import DeploymentList from './DeploymentList';
+import ProjectPreview from './ProjectPreview';
 
 const Dashboard = ({ user, projects, onDeploy, deployments }) => {
+  const [selectedDeployment, setSelectedDeployment] = useState(null);
+
   return (
     <div className="dashboard">
       <div className="welcome-section">
@@ -20,9 +23,14 @@ const Dashboard = ({ user, projects, onDeploy, deployments }) => {
         
         <div className="deployments-section">
           <h3>Recent Deployments</h3>
-          <DeploymentList deployments={deployments.slice(0, 5)} />
+          <DeploymentList deployments={deployments} />
         </div>
       </div>
+
+      <ProjectPreview 
+        deployment={selectedDeployment} 
+        onClose={() => setSelectedDeployment(null)} 
+      />
     </div>
   );
 };

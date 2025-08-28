@@ -482,17 +482,6 @@ main {
   border-left: 4px solid #c62828;
 }
 
-/* Faster deployment animation */
-.deployment-card .status.building {
-  color: #ff9800;
-  animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.7; }
-  100% { opacity: 1; }
-}
 
 /* Project size indicator */
 .project-size {
@@ -632,92 +621,7 @@ main {
 .deployment-card.updating {
   box-shadow: 0 0 0 2px #6e8efb;
 }
-/* Project Preview Styles */
-.preview-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 20px;
-}
 
-.preview-modal {
-  background: white;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 800px;
-  max-height: 90vh;
-  overflow-y: auto;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.preview-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 20px;
-  border-bottom: 1px solid #eee;
-  background: #f8f9fa;
-  border-radius: 12px 12px 0 0;
-}
-
-.preview-header h2 {
-  margin: 0;
-  color: #333;
-}
-
-.close-btn {
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-  padding: 5px;
-}
-
-.close-btn:hover {
-  color: #333;
-}
-
-.preview-content {
-  padding: 20px;
-}
-
-.preview-url {
-  margin-bottom: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  border-left: 4px solid #6e8efb;
-}
-
-.preview-url a {
-  color: #6e8efb;
-  text-decoration: none;
-  margin-left: 10px;
-}
-
-.preview-url a:hover {
-  text-decoration: underline;
-}
-
-.preview-frame {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-
-.preview-placeholder {
-  background: white;
-  min-height: 400px;
-}
 
 .website-mockup {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;

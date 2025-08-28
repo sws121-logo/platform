@@ -552,3 +552,83 @@ main {
   margin-top: 10px;
   border-left: 3px solid #2e7d32;
 }
+/* Deployment progress animation */
+.deployment-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6e8efb, #a777e3);
+  border-radius: 2px;
+  transition: width 0.5s ease-in-out;
+  animation: progress-pulse 2s infinite;
+}
+
+@keyframes progress-pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+/* Log entries */
+.logs-content {
+  max-height: 200px;
+  overflow-y: auto;
+  background: #f8f9fa;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-family: monospace;
+  font-size: 12px;
+}
+
+.log-entry {
+  display: flex;
+  margin-bottom: 5px;
+  padding: 3px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.log-time {
+  color: #666;
+  margin-right: 10px;
+  min-width: 80px;
+}
+
+.log-message {
+  color: #333;
+}
+
+/* Copy button */
+.copy-btn {
+  background-color: #6c757d;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.copy-btn:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.copy-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* View button improvements */
+.view-btn.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Real-time update indicator */
+.deployment-card {
+  transition: all 0.3s ease;
+}
+
+.deployment-card.updating {
+  box-shadow: 0 0 0 2px #6e8efb;
+}

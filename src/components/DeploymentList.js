@@ -1,7 +1,18 @@
 // src/components/DeploymentList.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 const DeploymentList = ({ deployments }) => {
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  // Update time every second to trigger re-renders for live updates
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   if (deployments.length === 0) {
     return (
       <div className="deployment-list empty">
@@ -28,7 +39,7 @@ const DeploymentList = ({ deployments }) => {
               <div className="deployment-progress">
                 <div 
                   className="deployment-progress-bar" 
-                  style={{ width: `${(deployment.logs.length / 6) * 100}%` }}
+                  style={{ width: `${(deployment.logs?.length || 0) * 20}%` }}
                 ></div>
               </div>
             )}
@@ -56,14 +67,29 @@ const DeploymentList = ({ deployments }) => {
             )}
           </div>
           <div className="deployment-actions">
-            <a 
-              href={deployment.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
+            <button
               className={`view-btn ${deployment.status === 'building' ? 'disabled' : ''}`}
+              onClick={() => {
+                if (deployment.status === 'building') {
+                  alert('Deployment is still in progress. Please wait...');
+                } else {
+                  // Show deployment preview
+                  alert(`This would show a preview of: ${deployment.url}\n\nIn a real application, this would display your deployed website.`);
+                }
+              }}
             >
-              View Live
-            </a>
+              {deployment.status === 'building' ? 'Building...' : 'View Live'}
+            </button>
+            <button 
+              className="copy-btn"
+              onClick={() => {
+                navigator.clipboard.writeText(deployment.url);
+                alert('Link copied to clipboard!');
+              }}
+              disabled={deployment.status === 'building'}
+            >
+              Copy Link
+            </button>
           </div>
         </div>
       ))}

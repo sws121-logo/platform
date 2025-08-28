@@ -11,9 +11,33 @@ const ProjectList = ({ projects, onDeploy }) => {
     );
   }
 
+  // Filter out empty or non-deployable projects
+  const deployableProjects = projects.filter(project => 
+    project.size > 0 && // Has some content
+    (project.language || project.description || project.name !== 'README') // Not just a README
+  );
+
+  if (deployableProjects.length === 0) {
+    return (
+      <div className="project-list empty">
+        <p>No deployable projects found</p>
+        <p>Make sure your GitHub repositories contain code files (not just READMEs)</p>
+        <div className="deployment-tips">
+          <h4>Tips for deployable projects:</h4>
+          <ul>
+            <li>Include an index.html file for static websites</li>
+            <li>Add a package.json for Node.js projects</li>
+            <li>Include requirements.txt for Python projects</li>
+            <li>Ensure your repository has actual code files</li>
+          </ul>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="project-list">
-      {projects.map(project => (
+      {deployableProjects.map(project => (
         <div key={project.id} className="project-card">
           <div className="project-info">
             <h4>{project.name}</h4>
@@ -27,8 +51,8 @@ const ProjectList = ({ projects, onDeploy }) => {
               {project.stars !== undefined && (
                 <span className="project-stars">⭐ {project.stars}</span>
               )}
-              {project.forks !== undefined && (
-                <span className="project-forks">🍴 {project.forks}</span>
+              {project.size && (
+                <span className="project-size">📦 {Math.round(project.size / 1024)}KB</span>
               )}
             </div>
             <a href={project.url} target="_blank" rel="noopener noreferrer" className="project-link">
@@ -38,6 +62,7 @@ const ProjectList = ({ projects, onDeploy }) => {
           <button 
             onClick={() => onDeploy(project.id)}
             className="deploy-btn"
+            title="Deploy this project"
           >
             Deploy
           </button>
@@ -47,4 +72,4 @@ const ProjectList = ({ projects, onDeploy }) => {
   );
 };
 
-export default ProjectList;// src/components/ProjectList.js
+export default ProjectList;

@@ -691,3 +691,88 @@ main {
   margin-top: 10px;
   border-left: 3px solid #2e7d32;
 }
+/* Active nav button */
+.App-header nav button.active {
+  background-color: #6e8efb;
+  color: white;
+}
+
+/* Deployment count badge */
+.App-header nav button {
+  position: relative;
+}
+
+/* Real-time update animations */
+.deployment-card {
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Progress bar animation */
+.deployment-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #6e8efb, #a777e3);
+  border-radius: 2px;
+  transition: width 0.5s ease-in-out;
+  animation: progress-pulse 2s infinite;
+}
+
+@keyframes progress-pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 1; }
+  100% { opacity: 0.7; }
+}
+
+/* Button styles */
+.view-btn, .copy-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.view-btn {
+  background-color: #6e8efb;
+  color: white;
+}
+
+.view-btn:hover:not(.disabled) {
+  background-color: #5a7df9;
+}
+
+.view-btn.disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.copy-btn {
+  background-color: #6c757d;
+  color: white;
+  margin-left: 8px;
+}
+
+.copy-btn:hover:not(:disabled) {
+  background-color: #5a6268;
+}
+
+.copy-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Quick deploy notice */
+.quick-deploy-notice {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-left: 10px;
+  font-size: 12px;
+}

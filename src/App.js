@@ -31,7 +31,7 @@ function App() {
     }
   }, []);
 
-  // Function to load mock data
+  // Function to load mock data (renamed from useMockData)
   const loadMockData = (username) => {
     const mockProjects = [
       { id: 1, name: 'react-portfolio', url: `https://github.com/${username}/react-portfolio`, description: 'A portfolio website built with React' },
@@ -67,16 +67,8 @@ function App() {
       
       const repos = await response.json();
       
-      // Filter out forks and only include repos that can be deployed
-      const deployableRepos = repos.filter(repo => 
-        !repo.fork && 
-        repo.size > 0 && // Ensure repo has content
-        (repo.language || // Has code files
-         checkIfDeployable(repo)) // Or has other deployable content
-      );
-      
       // Transform GitHub API response to our project format
-      const userProjects = deployableRepos.map(repo => ({
+      const userProjects = repos.map(repo => ({
         id: repo.id,
         name: repo.name,
         url: repo.html_url,
@@ -85,9 +77,7 @@ function App() {
         stars: repo.stargazers_count,
         forks: repo.forks_count,
         updated: repo.updated_at,
-        isFork: repo.fork,
-        hasPages: repo.has_pages, // GitHub Pages indicator
-        size: repo.size
+        isFork: repo.fork
       }));
       
       setProjects(userProjects);
@@ -101,25 +91,12 @@ function App() {
     }
   };
 
-  // Check if a repo is deployable even without obvious code files
-  const checkIfDeployable = (repo) => {
-    // Check for common web project files
-    const deployableFiles = [
-      'index.html', 'package.json', 'requirements.txt', 
-      'app.py', 'main.js', 'style.css', 'config.yml'
-    ];
-    
-    // In a real app, we would check the repo contents via API
-    // For now, we'll assume repos with reasonable size are deployable
-    return repo.size > 10; // At least 10KB of content
-  };
-
   // Save deployments to localStorage
   const saveDeployments = (deployments) => {
     localStorage.setItem('deployhub_deployments', JSON.stringify(deployments));
   };
 
-  // Deploy project - FASTER version
+  // Deploy project
   const deployProject = async (projectId) => {
     const project = projects.find(p => p.id === projectId);
     if (!project) return;
@@ -136,20 +113,19 @@ function App() {
       status: 'building',
       url: deployUrl,
       date: new Date().toISOString(),
-      logs: ['Initializing deployment...']
+      logs: ['Initializing deployment...', 'Cloning repository...']
     };
     
     const updatedDeployments = [newDeployment, ...deployments];
     setDeployments(updatedDeployments);
     saveDeployments(updatedDeployments);
     
-    // FASTER build process with fewer steps and shorter delays
+    // Simulate build process with steps
     const buildSteps = [
-      { delay: 300, log: 'Cloning repository...' },
-      { delay: 400, log: 'Analyzing project structure...' },
-      { delay: 300, log: 'Installing dependencies...' },
-      { delay: 500, log: 'Building application...' },
-      { delay: 300, log: 'Finalizing deployment...' }
+      { delay: 1000, log: 'Installing dependencies...' },
+      { delay: 2000, log: 'Building application...' },
+      { delay: 3000, log: 'Optimizing assets...' },
+      { delay: 1000, log: 'Deploying to production...' }
     ];
     
     let currentStep = 0;
@@ -171,11 +147,7 @@ function App() {
       } else {
         // Mark as deployed
         const updatedDeployments = deployments.map(d => 
-          d.id === deploymentId ? { 
-            ...d, 
-            status: 'deployed',
-            logs: [...d.logs, 'Deployment completed successfully! 🎉']
-          } : d
+          d.id === deploymentId ? { ...d, status: 'deployed' } : d
         );
         setDeployments(updatedDeployments);
         saveDeployments(updatedDeployments);

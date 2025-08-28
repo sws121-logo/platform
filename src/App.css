@@ -632,3 +632,238 @@ main {
 .deployment-card.updating {
   box-shadow: 0 0 0 2px #6e8efb;
 }
+/* Project Preview Styles */
+.preview-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.preview-modal {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  background: #f8f9fa;
+  border-radius: 12px 12px 0 0;
+}
+
+.preview-header h2 {
+  margin: 0;
+  color: #333;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #666;
+  padding: 5px;
+}
+
+.close-btn:hover {
+  color: #333;
+}
+
+.preview-content {
+  padding: 20px;
+}
+
+.preview-url {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #6e8efb;
+}
+
+.preview-url a {
+  color: #6e8efb;
+  text-decoration: none;
+  margin-left: 10px;
+}
+
+.preview-url a:hover {
+  text-decoration: underline;
+}
+
+.preview-frame {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.preview-placeholder {
+  background: white;
+  min-height: 400px;
+}
+
+.website-mockup {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.browser-bar {
+  background: #f1f3f4;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.browser-dots {
+  display: flex;
+  gap: 6px;
+  margin-right: 15px;
+}
+
+.browser-dots span {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #e0e0e0;
+}
+
+.browser-dots span:nth-child(1) { background: #ff5f57; }
+.browser-dots span:nth-child(2) { background: #ffbd2e; }
+.browser-dots span:nth-child(3) { background: #28ca42; }
+
+.browser-url {
+  flex: 1;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #666;
+  border: 1px solid #ddd;
+}
+
+.website-content {
+  padding: 30px;
+  text-align: center;
+}
+
+.website-content h3 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.website-content p {
+  color: #666;
+  margin-bottom: 25px;
+  font-size: 16px;
+}
+
+.project-details {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  text-align: left;
+}
+
+.project-details h4 {
+  margin-top: 0;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.project-details ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.project-details li {
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.project-details li:last-child {
+  border-bottom: none;
+}
+
+.status.deployed {
+  color: #28a745;
+  font-weight: 500;
+}
+
+.deployment-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.visit-btn {
+  background: #6e8efb;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.visit-btn:hover {
+  background: #5a7df9;
+}
+
+.copy-url-btn {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.copy-url-btn:hover {
+  background: #5a6268;
+}
+
+.preview-actions {
+  background: #fff3cd;
+  padding: 15px;
+  border-radius: 6px;
+  border-left: 4px solid #ffc107;
+}
+
+.preview-note {
+  margin: 0 0 15px 0;
+  color: #856404;
+}
+
+.preview-actions ul {
+  margin: 0;
+  padding-left: 20px;
+  color: #856404;
+}
+
+.preview-actions li {
+  margin-bottom: 5px;
+}

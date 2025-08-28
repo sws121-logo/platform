@@ -1,4 +1,4 @@
-// components/DeploymentList.js - List of deployments
+// src/components/DeploymentList.js
 import React from 'react';
 
 const DeploymentList = ({ deployments }) => {
@@ -19,10 +19,41 @@ const DeploymentList = ({ deployments }) => {
             <h4>{deployment.projectName}</h4>
             <p className={`status ${deployment.status}`}>
               Status: {deployment.status}
+              {deployment.status === 'building' && (
+                <span className="quick-deploy-notice">Fast deployment in progress...</span>
+              )}
             </p>
+            
+            {deployment.status === 'building' && (
+              <div className="deployment-progress">
+                <div 
+                  className="deployment-progress-bar" 
+                  style={{ width: `${(deployment.logs.length / 6) * 100}%` }}
+                ></div>
+              </div>
+            )}
+            
             <p className="date">
               {new Date(deployment.date).toLocaleString()}
             </p>
+            
+            {deployment.logs && deployment.logs.length > 0 && (
+              <div className="deployment-logs">
+                <details>
+                  <summary>View logs ({deployment.logs.length})</summary>
+                  <div className="logs-content">
+                    {deployment.logs.map((log, index) => (
+                      <div key={index} className="log-entry">
+                        <span className="log-time">
+                          {new Date(deployment.date).toLocaleTimeString()}
+                        </span>
+                        <span className="log-message">{log}</span>
+                      </div>
+                    ))}
+                  </div>
+                </details>
+              </div>
+            )}
           </div>
           <div className="deployment-actions">
             <a 

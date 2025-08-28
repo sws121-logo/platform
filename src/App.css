@@ -481,3 +481,74 @@ main {
   margin-bottom: 20px;
   border-left: 4px solid #c62828;
 }
+
+/* Faster deployment animation */
+.deployment-card .status.building {
+  color: #ff9800;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+/* Project size indicator */
+.project-size {
+  background-color: #f5f5f5;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+/* Deployment tips */
+.deployment-tips {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #6e8efb;
+}
+
+.deployment-tips h4 {
+  margin-top: 0;
+  color: #333;
+}
+
+.deployment-tips ul {
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+
+.deployment-tips li {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+/* Progress bar for deployment */
+.deployment-progress {
+  height: 4px;
+  background-color: #e0e0e0;
+  border-radius: 2px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+
+.deployment-progress-bar {
+  height: 100%;
+  background-color: #6e8efb;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+/* Quick deployment notification */
+.quick-deploy-notice {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  margin-top: 10px;
+  border-left: 3px solid #2e7d32;
+}
